@@ -44,16 +44,18 @@ namespace algebra{
                 
             T& operator () (std::size_t i,std::size_t j){
                 if(i>=row ||j>=col){
-                    std::wcerr<<"\n\nIndex exceed bounds of the matrix\n\n"<<std::endl;
+                    std::cerr<<"\n\nIndex exceed bounds of the matrix\n\n"<<std::endl;
+                    exit(0);
                 }           
                 if(is_compressed()){
                     if constexpr (S==StorageOrder::Row){
                         for(size_t k=inner[i];k<inner[i+1];++k){
                             if(outer[k]==j){
-                                return elem[{i,j}];
+                                return val[k];
                             }
                         }
-                        std::wcerr<<"\n\nCannot insert a new element in compressed form\n\n"<<std::endl;                        
+                        std::wcerr<<"\n\nCannot insert a new element in compressed form\n\n"<<std::endl;
+                        exit(0);                        
                     }
                     else if constexpr (S==StorageOrder::Column){
 
@@ -64,12 +66,21 @@ namespace algebra{
             }
 
             T operator () (std::size_t i,std::size_t j) const{
-                std::array<std::size_t,2> key={i,j};
-                auto it=elem.find(key);
-                if(it==elem.end()){
-                    return 0;
+                if(i>row || j>col){
+                    std::cerr<<"\n\nIndex excedds matrix bounds\n\n"<<std::endl;
+                    exit(0);
                 }
-                return it->second;
+                if(is_compressed()){
+
+                }
+                else{
+                    std::array<std::size_t,2> key={i,j};
+                    auto it=elem.find(key);
+                    if(it==elem.end()){
+                        return 0;
+                    }
+                    return it->second;                
+                }
             }
             
             void compress(){
@@ -115,11 +126,88 @@ namespace algebra{
             }
 
             void resize(std::size_t R,std::size_t C){
+                if(is_compressed()){
+                    std::cout<<"\n\nto resize the matrix needs to be in an uncompressed state\n\n"<<std::endl;
+                    exit(0);
+                }
+                if(R<row){
+                    if constexpr(S==StorageOrder::Row){
+                        auto it=elem.lower_bound({R,0});
+                        elem.erase(it,elem.end());
+                    }
+                    else{
+                        for(size_t i=R;i<row;++i){
+                            for(size_t j=0;j<col;++j){
+                                elem.erase({i,j});
+                            }
+                        }
+                    }
+                }
+                if(C<col){
+                    if constexpr (S==StorageOrder::Column){
+                        auto it=elem.lower_bounds({0,C});
+                        elem.erase(it,elem.ends());
+                    }
+                    else{
+                        for(size_t j=C;j<col;++j){
+                            for(size_t i=0;i<row;++i){
+                                elem.erase({i,j});
+                            }
+                        }
+                    }
+                }
                 row=R;
                 col=C;
+                return;
+            }
 
+            friend std::vector<T> operator * (const algebra::Matrix<T,S> A,const std::vector<T> b){
+                std::vector<T> res;
+                if(b.size()!=A.col){
+                    std::cerr<<"\n\nIncompatible size for this operation\n\n"<<std::endl;
+                    exit(0);
+                }
+    
+                if(A.is_compressed()){
+                    if constexpr (S==StorageOrder::Row){
+                        for(size_t i=0;i<A.inner.size()-1;++i){
+                            T resI=0;
+                            for(size_t j=A.inner[i];j<A.inner[i+1];++j){
+                                resI+=A.val[j]*b[A.outer[j]];
+                            }
+                            res.push_back(resI);
+                        }
+                    }
+                    else if constexpr (S==StorageOrder::Column){
+                        //probably equal to the row ordering
+                    }                    
+                }
+                else{
+                    for(size_t i=0;i<A.row;++i){
+                        //std::vector<T> riga(A.col);
+                        T resI=0;
+                        for(size_t j=0; j<A.col;++j){
+                            if(A.elem.contains({i,j})){
+                                //riga[j]=A.elem.at({i,j});
+                                resI+=A.elem.at({i,j})*b[j];
+                            }
+                        }
+                        res.push_back(resI);
+                    }
+                }
+
+                return res;
+            }
+
+            friend algebra::Matrix<T,StorageOrder::Row> operator * (algebra::Matrix<T,S> A,algebra::Matrix<T,V> B){
+                if(A.col!=B.row){
+                    std::cerr<<"\n\nIncompatible size for operation\n\n"<<std::endl;
+                    exit(0);
+                }
+                algebra::Matrix<T,StorageOrder::Row> res(A.row,B.col);
                 
             }
+
 
             void print()const{
                 if(!is_compressed()){
