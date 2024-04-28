@@ -205,7 +205,13 @@ namespace algebra{
                     exit(0);
                 }
                 algebra::Matrix<T,StorageOrder::Row> res(A.row,B.col);
-                
+                if constexpr (V==StorageOrder::Row){
+
+                }
+                else if constexpr (V==StorageOrder::Column){
+
+                    
+                }
             }
 
 
