@@ -4,6 +4,7 @@
 
 int main(){
     constexpr algebra::StorageOrder S=algebra::StorageOrder::Row;
+    constexpr algebra::Norm N=algebra::Norm::One;
     algebra::Matrix<double,S> A(4,6);
     std::vector<double> v={1,1,1,1,1,1};
 
@@ -16,20 +17,17 @@ int main(){
     A(2,4)=70;
     A(3,5)=80;
 
-    A.print();
     A.compress();
-    A.print();
+    /*std::cout<<A.norm<algebra::Norm::One>()<<std::endl;
+    std::cout<<A.norm<N>()<<std::endl;
+    std::cout<<A.norm<algebra::Norm::Frobenius>()<<std::endl;*/
+    print(A);
     std::vector<double> r=A*v;
-    std::cout<<"risultato  "<<std::endl;
+    std::cout<<"risultato: ";
     for(size_t i=0;i<r.size();++i){
-        std::cout<<" "<<r[i];
+        std::cout<<r[i]<<"  ";
     }
     std::cout<<std::endl;
 
-    A.uncompress();
-    A.print();
-    A.resize(4,6);
-    A.print();
-    
     return 0;
 }
