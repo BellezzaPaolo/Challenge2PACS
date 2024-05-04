@@ -23,3 +23,7 @@ utility_functions.o: utility_functions.cpp $(HEADERS)
 # Clean rule to remove object files and the executable
 clean:
 	rm -f *.o $(EXEC)
+
+# Define rule to optimize the build
+optimize: CXXFLAGS += -O3
+optimize: $(EXEC)

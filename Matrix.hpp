@@ -4,6 +4,12 @@
 #include<map>
 #include<vector>
 #include<cmath>
+#include<string>
+#include<iostream>
+#include <sys/stat.h>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
 
 namespace algebra{
 
@@ -55,6 +61,8 @@ namespace algebra{
             friend Matrix<T,StorageOrder::Row> operator * (const Matrix<T,S>& A,const Matrix<T,V>& B);
 
             friend void print <>(const Matrix<T,S>& A);
+
+            friend void read <>(const std::string& filename,Matrix<T,S>& A);
 
             Matrix(std::size_t R,std::size_t C){
                 mappa<T,S> e;
@@ -130,6 +138,10 @@ namespace algebra{
             }
             
             void compress(){
+                if(is_compressed()){
+                    std::cout<<"\n\n it's already compressed"<<std::endl;
+                    exit(0);
+                }
                 if constexpr(S==StorageOrder::Row){
                     inner.resize(row+1,elem.size());
                     for(auto it:elem){
@@ -156,6 +168,10 @@ namespace algebra{
             }
 
             void uncompress(){
+                if(!is_compressed()){
+                    std::cout<<"\n\n it's already uncompressed"<<std::endl;
+                    exit(0);
+                }
                 if constexpr (S==StorageOrder::Row){
                     for(size_t i=0;i<inner.size()-1;++i){
                         if(inner[i]!=inner[inner.size()-1]){
@@ -410,17 +426,6 @@ namespace algebra{
                         res[i]+=it->second*b[it->first[1]];
                     }
                 }
-                
-/*    prova anche copiando la riga in un vettore
-        for(size_t i=0;i<A.row;++i){
-                T resI=0;
-                for(size_t j=0; j<A.col;++j){
-                    if(A.elem.contains({i,j})){
-                        resI+=A.elem.at({i,j})*b[j];
-                    }
-                }
-                res.push_back(resI);
-            }*/ 
             }                    
         }
         else {
@@ -463,12 +468,39 @@ namespace algebra{
     void print(const Matrix<T,S>& A){
         for(size_t i=0;i<A.row;++i){
             for(size_t j=0;j<A.col;++j){
-                std::cout<<A(i,j)<<"   ";
+                std::cout<<A(i,j)<<"    ";
             }
         std::cout<<std::endl;
         }
         return;
     }
+
+    template<typename T,StorageOrder S>
+    void read(const std::string& filename,Matrix<T,S>& A){
+        if(A.is_compressed()){
+            std::cout<<"Cannot insert elements in compressed form"<<std::endl;
+            exit(0);
+        }
+        A.elem.clear();
+        size_t i=0,j=0;
+        T k=0;
+        std::ifstream File(filename);
+        std::string line="%";
+        while(line[0]=='%'){
+            getline(File,line);
+        }
+        
+        std::istringstream util(line);
+        util>>A.row>>A.col;
+
+        while(getline(File,line)){
+            std::istringstream utile(line);
+            utile>>i>>j>>k;
+            A(i-1,j-1)=k;
+        }
+        return;
+    }
+
 
     }
 
