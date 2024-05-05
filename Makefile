@@ -5,8 +5,8 @@ CXX=g++ -std=c++20
 EXEC=main
 
 #define the headers, the objects, the source files to get the executable
-OBJECTS=main.o
-SRC=main.cpp 
+SRC=main.cpp
+OBJECTS=$(SRC:.cpp=.o)
 HEADERS=Matrix.hpp
 
 # Link the executable
@@ -14,7 +14,7 @@ $(EXEC) : $(OBJECTS)
 	$(CXX) $^ -o $@
 
 # Compile the source files into object files
-main.o: main.cpp $(HEADERS)
+%.o: %.cpp $(HEADERS)
 	$(CXX) -c $< -o $@
 
 

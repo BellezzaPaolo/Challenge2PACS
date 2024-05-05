@@ -61,9 +61,9 @@ namespace algebra{ //definition of namespace
 
             friend std::vector<T> operator * <> (const Matrix<T,S>& A,const std::vector<T>& b); //friend operator * that implements the matrix*vector product
 
-            template<StorageOrder V>
-            friend Matrix<T,StorageOrder::Row> operator * (const Matrix<T,S>& A,const Matrix<T,V>& B);  //friend operator * that implements the matrix*matrix product
-
+            /*template<StorageOrder V>
+            friend Matrix<T,StorageOrder::Row> operator * (const Matrix<T,S>& A,const Matrix<T,V>& B);  //friend operator * that implements the matrix*matrix product*/
+            
             friend void print <>(const Matrix<T,S>& A);  //friend function that prints the matrix in the usual form
 
             friend void read <>(const std::string& filename,Matrix<T,S>& A);  //friend function for reading the matrix from a file
@@ -481,7 +481,10 @@ namespace algebra{ //definition of namespace
         return res;
     }
 
-    template<typename T,StorageOrder V,StorageOrder S>
+
+//has a problem in the linking and time is running over so I leave it commented moreover it's not efficient at all but in my opinion should work
+//a more effiecient way was in develping but the time wasn't enough
+   /*template<typename T,StorageOrder V,StorageOrder S>   
     Matrix<T,StorageOrder::Row> operator * (const Matrix<T,S>& A,const Matrix<T,V>& B){
         if(A.col!=B.row){
             std::cerr<<"\n\nIncompatible size for operation\n\n"<<std::endl;
@@ -501,72 +504,7 @@ namespace algebra{ //definition of namespace
             }
         }
         return res;
-/*       if constexpr (V==StorageOrder::Row && S==StorageOrder::Row){
-            if(A.is_compressed() && B.is_compressed()){
-                for(size_t i=0;i<A.inner.size()-1;++i){
-                    for(size_t j=0;j<res.col;++j){
-                        T ris=0;
-                        for(size_t k=A.inner[i];k<A.inner[i+1];++k){
-                            if(k+B.inner[j]>)
-                        }
-                    }
-                }
-            }
-            else if(A.is_compressed() && !B.is_compressed()){
-
-            }
-            else if(!A.is_compressed() && B.is_compressed()){
-
-            }
-            else{
-
-            }
-        }
-        else if constexpr (V==StorageOrder::Column && S==StorageOrder::Row){
-            if(A.is_compressed() && B.is_compressed()){
-
-            }
-            else if(A.is_compressed() && !B.is_compressed()){
-
-            }
-            else if(!A.is_compressed() && B.is_compressed()){
-
-            }
-            else{
-
-            }
-        }
-        else if constexpr (V==StorageOrder::Row && S==StorageOrder::Column){
-            if(A.is_compressed() && B.is_compressed()){
-
-            }
-            else if(A.is_compressed() && !B.is_compressed()){
-
-            }
-            else if(!A.is_compressed() && B.is_compressed()){
-
-            }
-            else{
-
-            }
-        }
-        else if constexpr (V==StorageOrder::Column && S==StorageOrder::Column){
-            if(A.is_compressed() && B.is_compressed()){
-
-            }
-            else if(A.is_compressed() && !B.is_compressed()){
-
-            }
-            else if(!A.is_compressed() && B.is_compressed()){
-
-            }
-            else{
-
-            }
-        }
-
-        return res;*/
-    }           
+    }*/    
 
     template<typename T,StorageOrder S>
     void print(const Matrix<T,S>& A){  //prints the matrix in the most classic way
