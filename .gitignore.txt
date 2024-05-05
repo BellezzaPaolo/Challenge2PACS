@@ -2,3 +2,4 @@
 *.EXE
 main
 *.vscode
+.vscode
