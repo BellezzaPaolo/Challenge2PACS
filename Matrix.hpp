@@ -488,22 +488,84 @@ namespace algebra{ //definition of namespace
             exit(0);
         }
         Matrix<T,StorageOrder::Row> res(A.row,B.col);
-        std::vector<T> resI(A.row);
-        if constexpr (V==StorageOrder::Row){
-            if (B.is_compressed()){
-                std::vector<T> v(B.row);
-                for(size_t i=0; i<B.inner.size()-1;++i){
-                    for(size_t j=B.inner[i];j<B.inner[i+1];++j){
-                        v[i]+=B.val[B.outer[j]];
-                    }
-                    resI=A*v;
+
+        for(size_t i=0;i<res.row;++i){
+            for(size_t j=0;j<res.col;++j){
+                T Res=0;
+                for(size_t k=0;k<A.col;++k){
+                    Res+=A(i,k)*B(k,j);
+                }
+                if(Res!=0){
+                    res(i,j)=Res;
                 }
             }
         }
-        else if constexpr (V==StorageOrder::Column){
+        return res;
+/*       if constexpr (V==StorageOrder::Row && S==StorageOrder::Row){
+            if(A.is_compressed() && B.is_compressed()){
+                for(size_t i=0;i<A.inner.size()-1;++i){
+                    for(size_t j=0;j<res.col;++j){
+                        T ris=0;
+                        for(size_t k=A.inner[i];k<A.inner[i+1];++k){
+                            if(k+B.inner[j]>)
+                        }
+                    }
+                }
+            }
+            else if(A.is_compressed() && !B.is_compressed()){
 
+            }
+            else if(!A.is_compressed() && B.is_compressed()){
 
+            }
+            else{
+
+            }
         }
+        else if constexpr (V==StorageOrder::Column && S==StorageOrder::Row){
+            if(A.is_compressed() && B.is_compressed()){
+
+            }
+            else if(A.is_compressed() && !B.is_compressed()){
+
+            }
+            else if(!A.is_compressed() && B.is_compressed()){
+
+            }
+            else{
+
+            }
+        }
+        else if constexpr (V==StorageOrder::Row && S==StorageOrder::Column){
+            if(A.is_compressed() && B.is_compressed()){
+
+            }
+            else if(A.is_compressed() && !B.is_compressed()){
+
+            }
+            else if(!A.is_compressed() && B.is_compressed()){
+
+            }
+            else{
+
+            }
+        }
+        else if constexpr (V==StorageOrder::Column && S==StorageOrder::Column){
+            if(A.is_compressed() && B.is_compressed()){
+
+            }
+            else if(A.is_compressed() && !B.is_compressed()){
+
+            }
+            else if(!A.is_compressed() && B.is_compressed()){
+
+            }
+            else{
+
+            }
+        }
+
+        return res;*/
     }           
 
     template<typename T,StorageOrder S>
@@ -545,6 +607,6 @@ namespace algebra{ //definition of namespace
         return;
     }
 
-    }
+}
 
 #endif
