@@ -1,0 +1,22 @@
+Readme and git are good. Good job!
+
+Checklist:
+  - sparse_matrix constructor:   OKAY
+  - compress:                    OKAY
+  - uncompress:                  OKAY
+  - data is properly cleared:    OKAY
+  - call to non-const / const assignment operator: OKAY
+  - resize method:               OKAY
+  - operator*:                   IMPROVABLE
+  - reading from file:           OKAY
+
+EXTRAs
+  - One Column Matrix:           IMPROVABLE
+  - Norms:                       OKAY 
+
+General Comments:
+  - I don't like the output of your main code. It is not very readable and does not value your test.
+  - Why one should not employ the optmized version of the code?
+  - Don't leave block of commented codes. Make a main in a different folder to perform other tests.
+
+=== I tried to uncomment the part with A*B but it didn't compile. I am not going to debug it
